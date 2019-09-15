@@ -139,8 +139,8 @@ find %{buildroot} -name "*.a" -delete
 %{_libdir}/pkgconfig/libbrotli*.pc
 %{_mandir}/man3/%{name}-*.h.3*
 
-%files -n python3-%{name}
-%{python3_sitearch}/Brotli-%{version}-py%{python3_version}.egg-info/
-%{python3_sitearch}/__pycache__/brotli.*
-%{python3_sitearch}/*.so
-%{python3_sitearch}/brotli.py*
+%files -n python-%{name}
+%{python_sitearch}/Brotli-%{version}-py%{python_version}.egg-info/
+%{python_sitearch}/__pycache__/brotli.*
+%{python_sitearch}/*.so
+%{python_sitearch}/brotli.py*
