@@ -7,16 +7,16 @@
 Name:		brotli
 Summary:	Brotli compression format
 Version:	1.0.7
-Release:	%mkrel 3
+Release:	1
 License:	MIT
 Group:		Archiving/Compression
 Url:		https://github.com/google/brotli
 Source0:	https://github.com/google/brotli/archive/v%{version}/%{name}-%{version}.tar.gz
-Patch0:		brotli-1.0.2-no-static-brotli.patch
-Patch1:		python3.8.patch
+#Patch0:		brotli-1.0.2-no-static-brotli.patch
+#Patch1:		python3.8.patch
 BuildRequires:	cmake
-BuildRequires:	python3-devel
-BuildRequires:	python3-setuptools
+BuildRequires:	python-devel
+BuildRequires:	python-setuptools
 
 %description
 Brotli is a generic-purpose lossless compression algorithm that compresses
@@ -71,12 +71,12 @@ Provides:	%{name}-devel = %{version}-%{release}
 %description -n %{devname}
 Development files and headers for %{name}.
 
-%package -n python3-%{name}
+%package -n python-%{name}
 Summary:        Python3 module for %{name}
 Group:          Development/Python
-%{?python_provide:%python_provide python3-%{name}}
+%{?python_provide:%python_provide python-%{name}}
 
-%description -n python3-%{name}
+%description -n python-%{name}
 Brotli is a generic-purpose lossless compression algorithm that compresses
 data using a combination of a modern variant of the LZ77 algorithm, Huffman
 coding and 2nd order context modeling, with a compression ratio comparable
@@ -93,7 +93,7 @@ The specification of the Brotli Compressed Data Format is defined in RFC 7932.
 find c/ \( -name "*.c" -o -name "*.h" \) -exec chmod 644 {} \;
 
 %build
-%py3_build
+%py_build
 
 %cmake
 %make_build
@@ -101,7 +101,7 @@ find c/ \( -name "*.c" -o -name "*.h" \) -exec chmod 644 {} \;
 %install
 %make_install -C build
 
-%py3_install
+%py_install
 
 # man page
 install -Dpm644 docs/%{name}.1 %{buildroot}%{_mandir}/man1/%{name}.1
