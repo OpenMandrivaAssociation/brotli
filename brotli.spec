@@ -1,3 +1,5 @@
+%global optflags %{optflags} -O3
+
 # brotli is used by curl, curl is used by systemd,
 # libsystemd is used by wine
 %ifarch %{x86_64}
@@ -6,11 +8,11 @@
 %bcond_with compat32
 %endif
 
-%define major	1
-%define comlib	%mklibname brotlicommon %{major}
-%define enclib	%mklibname brotlienc %{major}
-%define declib	%mklibname brotlidec %{major}
-%define devname	%mklibname brotli -d
+%define major 1
+%define comlib %mklibname brotlicommon %{major}
+%define enclib %mklibname brotlienc %{major}
+%define declib %mklibname brotlidec %{major}
+%define devname %mklibname brotli -d
 %define comlib32 libbrotlicommon%{major}
 %define enclib32 libbrotlienc%{major}
 %define declib32 libbrotlidec%{major}
@@ -19,15 +21,16 @@
 Name:		brotli
 Summary:	Brotli compression format
 Version:	1.0.9
-Release:	1
+Release:	2
 License:	MIT
 Group:		Archiving/Compression
 Url:		https://github.com/google/brotli
 Source0:	https://github.com/google/brotli/archive/v%{version}/%{name}-%{version}.tar.gz
 #Patch0:		brotli-1.0.2-no-static-brotli.patch
 #Patch1:		python3.8.patch
+Patch10:	https://src.fedoraproject.org/rpms/brotli/raw/rawhide/f/09b0992b6acb7faa6fd3b23f9bc036ea117230fc.patch
 BuildRequires:	cmake
-BuildRequires:	python-devel
+BuildRequires:	pkgconfig(python3)
 BuildRequires:	python-setuptools
 
 %description
@@ -130,8 +133,8 @@ Development files and headers for %{name}.
 %endif
 
 %package -n python-%{name}
-Summary:        Python3 module for %{name}
-Group:          Development/Python
+Summary:	Python3 module for %{name}
+Group:		Development/Python
 %{?python_provide:%python_provide python-%{name}}
 
 %description -n python-%{name}
