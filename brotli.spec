@@ -21,7 +21,7 @@
 Name:		brotli
 Summary:	Brotli compression format
 Version:	1.0.9
-Release:	2
+Release:	3
 License:	MIT
 Group:		Archiving/Compression
 Url:		https://github.com/google/brotli
@@ -30,7 +30,7 @@ Source0:	https://github.com/google/brotli/archive/v%{version}/%{name}-%{version}
 #Patch1:		python3.8.patch
 Patch10:	https://src.fedoraproject.org/rpms/brotli/raw/rawhide/f/09b0992b6acb7faa6fd3b23f9bc036ea117230fc.patch
 BuildRequires:	cmake
-BuildRequires:	pkgconfig(python3)
+BuildRequires:	pkgconfig(python)
 BuildRequires:	python-setuptools
 
 %description
@@ -186,7 +186,7 @@ find %{buildroot} -name "*.a" -delete
 %doc README.md
 %license LICENSE
 %{_bindir}/%{name}
-%{_mandir}/man1/%{name}.1*
+%doc %{_mandir}/man1/%{name}.1*
 
 %files -n %{comlib}
 %license LICENSE
@@ -207,11 +207,10 @@ find %{buildroot} -name "*.a" -delete
 %{_libdir}/libbrotlienc.so
 %{_libdir}/libbrotlidec.so
 %{_libdir}/pkgconfig/libbrotli*.pc
-%{_mandir}/man3/%{name}-*.h.3*
+%doc %{_mandir}/man3/%{name}-*.h.3*
 
 %files -n python-%{name}
-%{python_sitearch}/Brotli-%{version}-py%{python_version}.egg-info/
-%{python_sitearch}/__pycache__/brotli.*
+%{python_sitearch}/Brotli-%{version}-py%{python_version}.egg-info
 %{python_sitearch}/*.so
 %{python_sitearch}/brotli.py*
 
