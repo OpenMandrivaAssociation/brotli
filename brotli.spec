@@ -8,6 +8,9 @@
 %bcond_with compat32
 %endif
 
+# (tpg) enable PGO build
+%bcond_without pgo
+
 %define major 1
 %define comlib %mklibname brotlicommon %{major}
 %define enclib %mklibname brotlienc %{major}
@@ -21,7 +24,7 @@
 Name:		brotli
 Summary:	Brotli compression format
 Version:	1.0.9
-Release:	3
+Release:	4
 License:	MIT
 Group:		Archiving/Compression
 Url:		https://github.com/google/brotli
@@ -32,6 +35,9 @@ Patch10:	https://src.fedoraproject.org/rpms/brotli/raw/rawhide/f/09b0992b6acb7fa
 BuildRequires:	cmake
 BuildRequires:	pkgconfig(python)
 BuildRequires:	python-setuptools
+%if %{with compat32}
+BuildRequires:	libc6
+%endif
 
 %description
 Brotli is a generic-purpose lossless compression algorithm that compresses
@@ -162,8 +168,27 @@ find c/ \( -name "*.c" -o -name "*.h" \) -exec chmod 644 {} \;
 cd ..
 %endif
 
+%if %{with pgo}
+CFLAGS="%{optflags} -fprofile-generate" \
+CXXFLAGS="%{optflags} -fprofile-generate" \
+LDFLAGS="%{build_ldflags} -fprofile-generate" \
 %cmake
 %make_build
+make test
+
+unset LD_LIBRARY_PATH
+llvm-profdata merge --output=%{name}-llvm.profdata $(find . -name "*.profraw" -type f)
+PROFDATA="$(realpath %{name}-llvm.profdata)"
+rm -f *.profile.d
+rm -rf build
+
+CFLAGS="%{optflags} -fprofile-use=$PROFDATA" \
+CXXFLAGS="%{optflags} -fprofile-instr-use=$PROFDATA" \
+LDFLAGS="%{build_ldflags} -fprofile-instr-use=$PROFDATA" \
+%else
+%cmake
+%make_build
+%endif
 
 %install
 %if %{with compat32}
