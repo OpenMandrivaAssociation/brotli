@@ -24,14 +24,15 @@
 Name:		brotli
 Summary:	Brotli compression format
 Version:	1.0.9
-Release:	4
+Release:	6
 License:	MIT
 Group:		Archiving/Compression
 Url:		https://github.com/google/brotli
 Source0:	https://github.com/google/brotli/archive/v%{version}/%{name}-%{version}.tar.gz
 #Patch0:		brotli-1.0.2-no-static-brotli.patch
 #Patch1:		python3.8.patch
-Patch10:	https://src.fedoraproject.org/rpms/brotli/raw/rawhide/f/09b0992b6acb7faa6fd3b23f9bc036ea117230fc.patch
+Patch10:	https://github.com/google/brotli/commit/09b0992b6acb7faa6fd3b23f9bc036ea117230fc.patch
+Patch11:	https://github.com/google/brotli/commit/7e8e207ce22a8eb6ce0148015fe3f560ac1e48b5.patch
 BuildRequires:	cmake
 BuildRequires:	pkgconfig(python)
 BuildRequires:	python-setuptools
@@ -176,19 +177,19 @@ LDFLAGS="%{build_ldflags} -fprofile-generate" \
 %make_build
 make test
 
+cd ..
 unset LD_LIBRARY_PATH
 llvm-profdata merge --output=%{name}-llvm.profdata $(find . -name "*.profraw" -type f)
 PROFDATA="$(realpath %{name}-llvm.profdata)"
-rm -f *.profile.d
+find . -name "*.profraw" -type f -delete
 rm -rf build
 
 CFLAGS="%{optflags} -fprofile-use=$PROFDATA" \
-CXXFLAGS="%{optflags} -fprofile-instr-use=$PROFDATA" \
-LDFLAGS="%{build_ldflags} -fprofile-instr-use=$PROFDATA" \
-%else
+CXXFLAGS="%{optflags} -fprofile-use=$PROFDATA" \
+LDFLAGS="%{build_ldflags} -fprofile-use=$PROFDATA" \
+%endif
 %cmake
 %make_build
-%endif
 
 %install
 %if %{with compat32}
