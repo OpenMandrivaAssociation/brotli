@@ -10,6 +10,7 @@
 
 # (tpg) enable PGO build
 %bcond_without pgo
+%bcond_without python
 
 %define major 1
 %define comlib %mklibname brotlicommon %{major}
@@ -34,8 +35,11 @@ Source0:	https://github.com/google/brotli/archive/v%{version}/%{name}-%{version}
 Patch10:	https://github.com/google/brotli/commit/09b0992b6acb7faa6fd3b23f9bc036ea117230fc.patch
 Patch11:	https://github.com/google/brotli/commit/7e8e207ce22a8eb6ce0148015fe3f560ac1e48b5.patch
 BuildRequires:	cmake
+BuildRequires:	ninja
+%if %{with python}
 BuildRequires:	pkgconfig(python)
 BuildRequires:	python-setuptools
+%endif
 %if %{with compat32}
 BuildRequires:	libc6
 %endif
@@ -160,12 +164,14 @@ The specification of the Brotli Compressed Data Format is defined in RFC 7932.
 find c/ \( -name "*.c" -o -name "*.h" \) -exec chmod 644 {} \;
 
 %build
+%if %{with python}
 %py_build
+%endif
 
 %global build_ldflags %(echo %{build_ldflags} |sed -e 's,-m64,,g')
 %if %{with compat32}
-%cmake32
-%make_build
+%cmake32 -G Ninja
+%ninja_build
 cd ..
 %endif
 
@@ -188,16 +194,18 @@ CFLAGS="%{optflags} -fprofile-use=$PROFDATA" \
 CXXFLAGS="%{optflags} -fprofile-use=$PROFDATA" \
 LDFLAGS="%{build_ldflags} -fprofile-use=$PROFDATA" \
 %endif
-%cmake
-%make_build
+%cmake -G Ninja
+%ninja_build
 
 %install
 %if %{with compat32}
-%make_install -C build32
+%ninja_install -C build32
 %endif
-%make_install -C build
+%ninja_install -C build
 
+%if %{with python}
 %py_install
+%endif
 
 # man page
 install -Dpm644 docs/%{name}.1 %{buildroot}%{_mandir}/man1/%{name}.1
@@ -235,10 +243,12 @@ find %{buildroot} -name "*.a" -delete
 %{_libdir}/pkgconfig/libbrotli*.pc
 %doc %{_mandir}/man3/%{name}-*.h.3*
 
+%if %{with python}
 %files -n python-%{name}
 %{python_sitearch}/Brotli-%{version}-py%{python_version}.egg-info
 %{python_sitearch}/*.so
 %{python_sitearch}/brotli.py*
+%endif
 
 %if %{with compat32}
 %files -n %{comlib32}
