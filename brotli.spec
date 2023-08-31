@@ -9,7 +9,11 @@
 %endif
 
 # (tpg) enable PGO build
+%if %{cross_compiling}
+%bcond_with pgo
+%else
 %bcond_without pgo
+%endif
 %bcond_without python
 
 %define major 1
@@ -24,16 +28,14 @@
 
 Name:		brotli
 Summary:	Brotli compression format
-Version:	1.0.9
-Release:	7
+Version:	1.1.0
+Release:	1
 License:	MIT
 Group:		Archiving/Compression
 Url:		https://github.com/google/brotli
 Source0:	https://github.com/google/brotli/archive/v%{version}/%{name}-%{version}.tar.gz
 #Patch0:		brotli-1.0.2-no-static-brotli.patch
 #Patch1:		python3.8.patch
-Patch10:	https://github.com/google/brotli/commit/09b0992b6acb7faa6fd3b23f9bc036ea117230fc.patch
-Patch11:	https://github.com/google/brotli/commit/7e8e207ce22a8eb6ce0148015fe3f560ac1e48b5.patch
 BuildRequires:	cmake
 BuildRequires:	ninja
 %if %{with python}
@@ -181,6 +183,7 @@ CXXFLAGS="%{optflags} -fprofile-generate" \
 LDFLAGS="%{build_ldflags} -fprofile-generate" \
 %cmake
 %make_build
+export LD_LIBRARY_PATH="$(pwd)"
 make test
 
 cd ..
