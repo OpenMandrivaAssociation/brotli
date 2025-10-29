@@ -28,7 +28,7 @@
 
 Name:		brotli
 Summary:	Brotli compression format
-Version:	1.1.0
+Version:	1.2.0
 Release:	1
 License:	MIT
 Group:		Archiving/Compression
@@ -244,7 +244,7 @@ find %{buildroot} -name "*.a" -delete
 %{_libdir}/libbrotlienc.so
 %{_libdir}/libbrotlidec.so
 %{_libdir}/pkgconfig/libbrotli*.pc
-%doc %{_mandir}/man3/%{name}-*.h.3*
+%doc %{_mandir}/man3/*.h.3*
 
 %if %{with python}
 %files -n python-%{name}
