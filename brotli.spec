@@ -181,10 +181,10 @@ cd ..
 CFLAGS="%{optflags} -fprofile-generate" \
 CXXFLAGS="%{optflags} -fprofile-generate" \
 LDFLAGS="%{build_ldflags} -fprofile-generate" \
-%cmake
-%make_build
+%cmake -G Ninja
+%ninja_build
 export LD_LIBRARY_PATH="$(pwd)"
-make test
+ninja test
 
 cd ..
 unset LD_LIBRARY_PATH
