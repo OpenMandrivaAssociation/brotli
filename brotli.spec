@@ -161,6 +161,10 @@ The specification of the Brotli Compressed Data Format is defined in RFC 7932.
 
 %prep
 %autosetup -p1
+%ifarch %{loongarch64}
+# loongarch64 currently (clang 21.1, gcc 15.2) doesn't support -mcmodel=small
+find . -name "*.h" -o -name "*.c" |xargs sed -i -e 's,BROTLI_MODEL("small") ,,;s, BROTLI_MODEL("small"),,'
+%endif
 
 # fix permissions
 find c/ \( -name "*.c" -o -name "*.h" \) -exec chmod 644 {} \;
