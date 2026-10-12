@@ -34,6 +34,7 @@ License:	MIT
 Group:		Archiving/Compression
 Url:		https://github.com/google/brotli
 Source0:	https://github.com/google/brotli/archive/v%{version}/%{name}-%{version}.tar.gz
+Source1:	brotli.rpmlintrc
 #Patch0:		brotli-1.0.2-no-static-brotli.patch
 #Patch1:		python3.8.patch
 BuildRequires:	cmake
@@ -176,9 +177,14 @@ find c/ \( -name "*.c" -o -name "*.h" \) -exec chmod 644 {} \;
 
 %global build_ldflags %(echo %{build_ldflags} |sed -e 's,-m64,,g')
 %if %{with compat32}
+# clang cannot link -m32: the i386 compiler-rt builtins are not packaged.
+export CC=gcc
+export CXX=g++
 %cmake32 -G Ninja
 %ninja_build
 cd ..
+unset CC
+unset CXX
 %endif
 
 %if %{with pgo}
@@ -259,17 +265,17 @@ find %{buildroot} -name "*.a" -delete
 
 %if %{with compat32}
 %files -n %{comlib32}
-%{_prefix}/lib/libbrotlicommon.so.%{major}{,.*}
+%{_usr}/lib/libbrotlicommon.so.%{major}*
 
 %files -n %{enclib32}
-%{_prefix}/lib/libbrotlienc.so.%{major}{,.*}
+%{_usr}/lib/libbrotlienc.so.%{major}*
 
 %files -n %{declib32}
-%{_prefix}/lib/libbrotlidec.so.%{major}{,.*}
+%{_usr}/lib/libbrotlidec.so.%{major}*
 
 %files -n %{devname32}
-%{_prefix}/lib/libbrotlicommon.so
-%{_prefix}/lib/libbrotlienc.so
-%{_prefix}/lib/libbrotlidec.so
-%{_prefix}/lib/pkgconfig/libbrotli*.pc
+%{_usr}/lib/libbrotlicommon.so
+%{_usr}/lib/libbrotlienc.so
+%{_usr}/lib/libbrotlidec.so
+%{_usr}/lib/pkgconfig/libbrotli*.pc
 %endif
