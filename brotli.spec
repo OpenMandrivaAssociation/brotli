@@ -29,7 +29,7 @@
 Name:		brotli
 Summary:	Brotli compression format
 Version:	1.2.0
-Release:	3
+Release:	4
 License:	MIT
 Group:		Archiving/Compression
 Url:		https://github.com/google/brotli
