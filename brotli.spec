@@ -29,12 +29,15 @@
 Name:		brotli
 Summary:	Brotli compression format
 Version:	1.2.0
-Release:	4
+Release:	5
 License:	MIT
 Group:		Archiving/Compression
 Url:		https://github.com/google/brotli
 Source0:	https://github.com/google/brotli/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:	brotli.rpmlintrc
+# CVE-2026-111497: reject an invalid block-type switch.
+# google/brotli 0ed4268, plus the safe-path return type from 1260a298.
+Patch2:		brotli-1.2.0-cve-2026-111497.patch
 #Patch0:		brotli-1.0.2-no-static-brotli.patch
 #Patch1:		python3.8.patch
 BuildRequires:	cmake
